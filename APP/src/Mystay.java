@@ -30,6 +30,7 @@ class BookingHistory {
     public BookingHistory() {
         history = new ArrayList<>();
     }
+}
 
     public void addBooking(Reservation reservation) {
         history.add(reservation);
@@ -110,6 +111,7 @@ public class Mystay {
         reportService.displayAllBookings();
         reportService.generateSummaryReport();
 
-        sc.close();
+        System.out.println("---- Available Rooms ----\n");
+        searchService.searchAvailableRooms();
     }
 }
