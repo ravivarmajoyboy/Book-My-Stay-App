@@ -1,112 +1,92 @@
 import java.util.*;
 
-abstract class Room {
-    private String type;
-    private int beds;
-    private double price;
+class AddOnService {
+    private String name;
+    private double cost;
 
-    public Room(String type, int beds, double price) {
-        this.type = type;
-        this.beds = beds;
-        this.price = price;
+    public AddOnService(String name, double cost) {
+        this.name = name;
+        this.cost = cost;
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public int getBeds() {
-        return beds;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public abstract void displayRoomDetails();
-}
-
-class SingleRoom extends Room {
-    public SingleRoom() {
-        super("Single Room", 1, 1000.0);
-    }
-
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getType());
-        System.out.println("Beds: " + getBeds());
-        System.out.println("Price: " + getPrice());
+    public double getCost() {
+        return cost;
     }
 }
 
-class DoubleRoom extends Room {
-    public DoubleRoom() {
-        super("Double Room", 2, 1800.0);
-    }
+class AddOnServiceManager {
+    private Map<String, List<AddOnService>> serviceMap;
 
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getType());
-        System.out.println("Beds: " + getBeds());
-        System.out.println("Price: " + getPrice());
+    public AddOnServiceManager() {
+        serviceMap = new HashMap<>();
     }
 }
 
-class SuiteRoom extends Room {
-    public SuiteRoom() {
-        super("Suite Room", 3, 3000.0);
+    public void addService(String reservationId, AddOnService service) {
+        serviceMap.putIfAbsent(reservationId, new ArrayList<>());
+        serviceMap.get(reservationId).add(service);
     }
 
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getType());
-        System.out.println("Beds: " + getBeds());
-        System.out.println("Price: " + getPrice());
-    }
-}
+    public double getTotalCost(String reservationId) {
+        double total = 0;
+        List<AddOnService> services = serviceMap.get(reservationId);
 
-class RoomInventory {
-    private Map<String, Integer> inventory;
+        if (services == null) return 0;
 
-    public RoomInventory() {
-        inventory = new HashMap<>();
-        inventory.put("Single Room", 5);
-        inventory.put("Double Room", 3);
-        inventory.put("Suite Room", 0);
+        for (AddOnService s : services) {
+            total += s.getCost();
+        }
+        return total;
     }
 
-    public int getAvailability(String roomType) {
-        return inventory.getOrDefault(roomType, 0);
-    }
+    public void displayServices(String reservationId) {
+        List<AddOnService> services = serviceMap.get(reservationId);
 
-    public Set<String> getRoomTypes() {
-        return inventory.keySet();
-    }
-}
+        if (services == null || services.isEmpty()) {
+            System.out.println("No add-on services selected.");
+            return;
+        }
 
-class RoomSearchService {
-    private Map<String, Room> rooms;
-    private RoomInventory inventory;
-
-    public RoomSearchService(RoomInventory inventory) {
-        this.inventory = inventory;
-        rooms = new HashMap<>();
-        rooms.put("Single Room", new SingleRoom());
-        rooms.put("Double Room", new DoubleRoom());
-        rooms.put("Suite Room", new SuiteRoom());
-    }
-
-    public void searchAvailableRooms() {
-        for (String type : inventory.getRoomTypes()) {
-            int available = inventory.getAvailability(type);
-            if (available > 0) {
-                Room room = rooms.get(type);
-                room.displayRoomDetails();
-                System.out.println("Available: " + available + "\n");
-            }
+        System.out.println("Add-On Services:");
+        for (AddOnService s : services) {
+            System.out.println("- " + s.getName() + " : " + s.getCost());
         }
     }
 }
 
-public class Mystay{
+public class Mystay {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        AddOnServiceManager manager = new AddOnServiceManager();
+
+        System.out.print("Enter Reservation ID: ");
+        String reservationId = sc.nextLine();
+
+        System.out.print("Enter number of add-on services: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter service name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter service cost: ");
+            double cost = sc.nextDouble();
+            sc.nextLine();
+
+            manager.addService(reservationId, new AddOnService(name, cost));
+        }
+
+        System.out.println("\n---- Selected Services ----\n");
+        manager.displayServices(reservationId);
+
+        double total = manager.getTotalCost(reservationId);
+        System.out.println("\nTotal Additional Cost: " + total);
         RoomInventory inventory = new RoomInventory();
         RoomSearchService searchService = new RoomSearchService(inventory);
 
