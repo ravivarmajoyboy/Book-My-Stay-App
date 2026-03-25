@@ -24,6 +24,7 @@ class AddOnServiceManager {
     public AddOnServiceManager() {
         serviceMap = new HashMap<>();
     }
+}
 
     public void addService(String reservationId, AddOnService service) {
         serviceMap.putIfAbsent(reservationId, new ArrayList<>());
@@ -86,7 +87,13 @@ public class Mystay {
 
         double total = manager.getTotalCost(reservationId);
         System.out.println("\nTotal Additional Cost: " + total);
+        RoomInventory inventory = new RoomInventory();
+        RoomSearchService searchService = new RoomSearchService(inventory);
 
-        sc.close();
+        System.out.println("Welcome to Hotel Booking System");
+        System.out.println("Version: 4.0\n");
+
+        System.out.println("---- Available Rooms ----\n");
+        searchService.searchAvailableRooms();
     }
 }
