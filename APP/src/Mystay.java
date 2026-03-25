@@ -1,4 +1,5 @@
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 abstract class Room {
     private String type;
@@ -62,34 +63,55 @@ class SuiteRoom extends Room {
     }
 }
 
+class RoomInventory {
+    private Map<String, Integer> inventory;
+
+    public RoomInventory() {
+        inventory = new HashMap<>();
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
+    }
+
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
+    }
+
+    public void updateAvailability(String roomType, int count) {
+        inventory.put(roomType, count);
+    }
+
+    public void displayInventory() {
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " Available: " + entry.getValue());
+        }
+    }
+}
+
 public class Mystay {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
 
         Room single = new SingleRoom();
         Room doubleRoom = new DoubleRoom();
         Room suite = new SuiteRoom();
 
-        System.out.print("Enter availability for Single Room: ");
-        int singleAvailability = sc.nextInt();
+        RoomInventory inventory = new RoomInventory();
 
-        System.out.print("Enter availability for Double Room: ");
-        int doubleAvailability = sc.nextInt();
+        System.out.println("Welcome to Hotel Booking System");
+        System.out.println("Version: 3.1\n");
 
-        System.out.print("Enter availability for Suite Room: ");
-        int suiteAvailability = sc.nextInt();
-
-        System.out.println("\n---- Room Details ----\n");
+        System.out.println("---- Room Details ----\n");
 
         single.displayRoomDetails();
-        System.out.println("Available: " + singleAvailability + "\n");
+        System.out.println("Available: " + inventory.getAvailability(single.getType()) + "\n");
 
         doubleRoom.displayRoomDetails();
-        System.out.println("Available: " + doubleAvailability + "\n");
+        System.out.println("Available: " + inventory.getAvailability(doubleRoom.getType()) + "\n");
 
         suite.displayRoomDetails();
-        System.out.println("Available: " + suiteAvailability + "\n");
+        System.out.println("Available: " + inventory.getAvailability(suite.getType()) + "\n");
 
-        sc.close();
+        System.out.println("---- Full Inventory ----\n");
+        inventory.displayInventory();
     }
 }
