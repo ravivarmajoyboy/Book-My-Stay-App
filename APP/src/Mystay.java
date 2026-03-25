@@ -105,7 +105,7 @@ class RoomSearchService {
     }
 }
 
-public class Mystay {
+public class Mystay{
     public static void main(String[] args) {
         RoomInventory inventory = new RoomInventory();
         RoomSearchService searchService = new RoomSearchService(inventory);
