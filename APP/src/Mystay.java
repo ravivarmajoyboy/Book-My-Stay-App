@@ -121,6 +121,7 @@ public class Mystay {
 
         inventory.display();
 
-        sc.close();
+        System.out.println("---- Available Rooms ----\n");
+        searchService.searchAvailableRooms();
     }
 }
